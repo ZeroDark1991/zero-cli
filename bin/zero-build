@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+const shell = require('shelljs')
+const program = require('commander')
+const inquirer = require('inquirer')
+
+program
+  .usage('<project>')
+  .parse(process.argv)
+
+program.on('--help', () => {
+  console.log('')
+  console.log(chalk.yellow('  Exammples:'))
+  console.log('')
+  console.log('    $ zero build')
+})
+
+let dir = path.join(process.cwd(), 'src')
+let list
+try {
+  list = fs.readdirSync(dir)
+} catch(e) {
+  console.log(e)
+  console.log('did not find src folder')
+  return process.exit()
+}
+
+let project = program.args[0]
+
+if(project) {
+  excute(project)
+} else {
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'project',
+      message: 'which project do you want to build?',
+      choices:list
+    }
+  ]).then(function ({ project }) {
+    excute(project)
+  });
+}
+
+/**
+ * Excute
+ */
+
+function excute(project) {
+  // shell.chmod('-R', 'a-w', `dist`)
+  // shell.rm('-rf', `dist/${project}`)
+  // shell.mkdir('-p', `dist/${project}`)
+  shell.exec(`npm run build:client --project=${project}`)
+  shell.exec(`npm run build:server --project=${project}`)
+}

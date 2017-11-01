@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+
+program
+  .version(require('../package.json').version)
+  .description('cli for build project')
+  .usage('<command> [options]')
+  .command('build', 'build a specific project')
+  .option('--project', 'specify a project without choosing')
+  .parse(process.argv)
